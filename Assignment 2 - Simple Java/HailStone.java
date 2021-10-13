@@ -13,36 +13,31 @@ public class HailStone extends ConsoleProgram {
 	
 	public static void main(String [] args) {
 		new HailStone().start(args);
-	}
-	
+	}	
 	// variables...
 	int workInt;
 	int sentinal = 1;	
-	int tryCount = 0;
-	
-	public void run () {		
-	    
-		int n = readInt("Enter a number..");
-		workInt = n;
-		
+	int tryCount = 0;	
+	public void run () {			    		
+	    int n = readInt("Enter a number..");
+	    workInt = n;		
 	    while (true) {
-	    	tryCount++;
-		    if (workInt % 2 == 1) {   	
-		    	println(workInt + " is odd, so I make 3n + 1: " + (workInt * 3 + 1));
-			    workInt = workInt * 3 + 1;
-			    if (workInt == sentinal) {
-			    	break;
-			    }
-			}
-		    else 
-		    {
-			    println (workInt + " is even so, I take half: " + workInt / 2);
-			    workInt = workInt / 2;			    
-				if (workInt == sentinal) {
-				    break;
-				}
-			} 
-	   }	
+	        tryCount++;
+		if (workInt % 2 == 1) {   	
+		    println(workInt + " is odd, so I make 3n + 1: " + (workInt * 3 + 1));
+		    workInt = workInt * 3 + 1;
+		    if (workInt == sentinal) {
+		        break;
+		    }
+		}
+		else {		    {
+	            println (workInt + " is even so, I take half: " + workInt / 2);
+		    workInt = workInt / 2;			    
+		    if (workInt == sentinal) {
+		        break;
+		    }
+		} 
+	    }	
 	   println("This process took " + tryCount + " to reach " + workInt);
 	}
 }
