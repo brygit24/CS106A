@@ -17,60 +17,60 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 		new Yahtzee().start(inArgs);
 	}	
 	public void run() {		
-		IODialog dialog = getDialog();
-		nPlayers = dialog.readInt("Enter the number of players");
-		playerNames = new String[nPlayers];
-		for (int i = 1; i <= nPlayers; i++) {  // indexing the players names, to start at 1 instead of 0
-                     playerNames[i - 1]	= dialog.readLine("Enter the name for player " + i);              
-		}				
-		display = new YahtzeeDisplay(getGCanvas(), playerNames);		
-		playGame();		
+	    IODialog dialog = getDialog();
+	    nPlayers = dialog.readInt("Enter the number of players");
+	    playerNames = new String[nPlayers];
+	    for (int i = 1; i <= nPlayers; i++) {  // indexing the players names, to start at 1 instead of 0
+                playerNames[i - 1] = dialog.readLine("Enter the name for player " + i);              
+	    }				
+	    display = new YahtzeeDisplay(getGCanvas(), playerNames);		
+	    playGame();		
 	}
 	// entry/start...
 	private void playGame() {		 
-		// "ghost", "clone", "copy" for tracking purposes..
-		// note how indexing "+1" works.  Categories START at cat1 AND players START at player 1.		
-		scoreCard = new int[N_CATEGORIES+1][nPlayers+1];		
-		booleanScoreCard = new boolean[N_CATEGORIES][nPlayers+1];	 // for checking previous scores player basis		
-		// cycle through the number of player and number of turns per player
-		for (int turns = 0; turns < N_SCORING_CATEGORIES; turns++) {		
-		    for (int player = 1; player <= nPlayers; player++) { // code DEALS with player indices starting at 1
-		        firstRoll(player);
-			secondAndThirdRoll();
-			selectCategory(player);				
-		    }			
-		}	
-		// Make the FINAL TOTAL SCORE CALCULATIONS.
+	    // "ghost", "clone", "copy" for tracking purposes..
+	    // note how indexing "+1" works.  Categories START at cat1 AND players START at player 1.		
+	    scoreCard = new int[N_CATEGORIES+1][nPlayers+1];		
+	    booleanScoreCard = new boolean[N_CATEGORIES][nPlayers+1];	 // for checking previous scores player basis		
+	    // cycle through the number of player and number of turns per player
+	    for (int turns = 0; turns < N_SCORING_CATEGORIES; turns++) {		
+                for (int player = 1; player <= nPlayers; player++) { // code DEALS with player indices starting at 1
+		    firstRoll(player);
+		    secondAndThirdRoll();
+		    selectCategory(player);				
+	        }			
+	    }	
+	    // Make the FINAL TOTAL SCORE CALCULATIONS.
 	    updateFinal();	    
 	    declareWinner();	    
 	}	
 	//... 
 	private void firstRoll(int inPlayer) {
-		display.displayDice(dice); 		
-		display.printMessage("It's " + playerNames[inPlayer-1] + "'s turn, click ROLL DICE button to roll dice "); 
-		display.waitForPlayerToClickRoll(inPlayer);  		
-		rollAllDie(dice);
-		display.displayDice(dice);
+	    display.displayDice(dice); 		
+	    display.printMessage("It's " + playerNames[inPlayer-1] + "'s turn, click ROLL DICE button to roll dice "); 
+	    display.waitForPlayerToClickRoll(inPlayer);  		
+	    rollAllDie(dice);
+	    display.displayDice(dice);
 	}
 	//...
 	private void secondAndThirdRoll() {
-		display.printMessage("Select the Dice to Re-roll and do Again(roll2)");
-		display.waitForPlayerToSelectDice();		
-		for (int i = 0; i < dice.length; i++) {
-		    if (display.isDieSelected(i)) {				
-			rollOneDie(i,dice );
-		    }
+	    display.printMessage("Select the Dice to Re-roll and do Again(roll2)");
+	    display.waitForPlayerToSelectDice();		
+	    for (int i = 0; i < dice.length; i++) {
+	        if (display.isDieSelected(i)) {				
+		    rollOneDie(i,dice );
 		}
-		display.displayDice(dice);
-		display.printMessage("Select the Dice to Re-roll and do Again(roll3)");
-		display.waitForPlayerToSelectDice();
-		for (int i = 0; i < dice.length; i++) {
-		    if (display.isDieSelected(i)) {				
-			rollOneDie(i,dice );
-		    }
+	    }
+	    display.displayDice(dice);
+	    display.printMessage("Select the Dice to Re-roll and do Again(roll3)");
+	    display.waitForPlayerToSelectDice();
+	    for (int i = 0; i < dice.length; i++) {
+	        if (display.isDieSelected(i)) {				
+		    rollOneDie(i,dice );
 		}
-		display.displayDice(dice);	
-		display.printMessage("end of roll3, TIME TO ADD YOUR SCORE");				
+	    }
+	    display.displayDice(dice);	
+	    display.printMessage("end of roll3, TIME TO ADD YOUR SCORE");				
 	}
 	// INITAL roll of ALL dice
 	private int [] rollAllDie(int [] inArr) {
@@ -187,40 +187,40 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 	   	}    	
 	   	// full house, 3 of one value and 2 of another  points = 25
 	   	else if (inCat == FULL_HOUSE) {    		
-	   		updateSums(inCat, inPlayer, 25);
-	   		updatePlayerTotal(inPlayer);
+	   	    updateSums(inCat, inPlayer, 25);
+	   	    updatePlayerTotal(inPlayer);
 	   	}
 	   	// small straight, 4 consecutive values let "magic" verify , then add 30 points
 	   	else if (inCat == SMALL_STRAIGHT) {    		
-	   		updateSums(inCat, inPlayer, 30);
-	   		updatePlayerTotal(inPlayer);
+	   	    updateSums(inCat, inPlayer, 30);
+	   	    updatePlayerTotal(inPlayer);
 	   	}
 	   	// large straight 5 consecutive values... let "magic" verify, then add 40
 	   	else if (inCat == LARGE_STRAIGHT) {    		
-	   		updateSums(inCat, inPlayer, 40);
-	   		updatePlayerTotal(inPlayer);
+	   	    updateSums(inCat, inPlayer, 40);
+	   	    updatePlayerTotal(inPlayer);
 	   	}
 	   	// Yahtzee!! = 5 of a kind. Let "magic" verify, then add 50
 	   	else if (inCat == YAHTZEE) {    		
-	   		updateSums(inCat, inPlayer, 50);
-	   		updatePlayerTotal(inPlayer);
+	   	    updateSums(inCat, inPlayer, 50);
+	   	    updatePlayerTotal(inPlayer);
 	   	}    	
 	}	
 	// a method to add ZEROS into display, the score card and the boolean tracker..
 	private void putZeros(int inCat, int inPlayer) {
-		display.updateScorecard(inCat,  inPlayer, 0);  // update the SE scorecard with their method.
-		scoreCard[inCat][inPlayer] = 0;            // my score tracker
-		booleanScoreCard[inCat][inPlayer] = true;  // my boolean tracker		
+	    display.updateScorecard(inCat,  inPlayer, 0);  // update the SE scorecard with their method.
+	    scoreCard[inCat][inPlayer] = 0;            // my score tracker
+	    booleanScoreCard[inCat][inPlayer] = true;  // my boolean tracker		
 	}	
 	// called from LOwer Score router...
 	// to sum ALL of dice values	
 	private void sumThreeOrFourOfKind (int inCat, int inPlayer) {		
-		int sum = 0;
-		for (int i = 0; i < dice.length; i++) {
-			sum = sum + dice[i];
-		}
-		updateSums(inCat, inPlayer, sum);
-		updatePlayerTotal(inPlayer);
+	    int sum = 0;
+	    for (int i = 0; i < dice.length; i++) {
+	        sum = sum + dice[i];
+	    }
+	    updateSums(inCat, inPlayer, sum);
+	    updatePlayerTotal(inPlayer);
 	}	
 	// REPLACING "MAGIC STUBB" for FULL CREDIT!!
 	// In early implementation, relied on the yahtzeelib's checkcategory
@@ -235,13 +235,13 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 		}	      
 		else if (inCat == THREE_OF_A_KIND || inCat == FOUR_OF_A_KIND) {  // note; 3 of a kind - if at LEAST 3 of kind.  If player has < 3 its ok...		      			
 		    if (checkthreeOrFourOfKind(dice)) {
-			    return true; // there are not INVALID rolls, trust there are 5 dice....
-			}
+		        return true; // there are not INVALID rolls, trust there are 5 dice....
+		    }
 		}	      
 		else if (inCat == FULL_HOUSE) {		      
 		    if (diceMap.containsValue(3) && diceMap.containsValue(2)) {// we know if there is 3 and 2 of kind = full house!
-			    return true;
-			}			
+		        return true;
+		    }			
 		}
 		else if (inCat == SMALL_STRAIGHT) {		      
 		    if (checkSmallStraight(inArr, smallStraightMap, smallStraightList)) {
@@ -250,12 +250,12 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 		}
 		else if (inCat == LARGE_STRAIGHT) {		      
 		    if (checkLargeStraight()) {
-			    return true;
-			}
+		        return true;
+		    }
 		}
 		else if (inCat == YAHTZEE) {
 		    if (diceMap.containsValue(5)) {  
-			    return true;
+		        return true;
 		    }
 		}	      
 		return false;// the DEFAULT will be to return FALSE, each cat will return TRUE IF, or else land here and return false.		
@@ -433,7 +433,7 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 	private boolean [][] booleanScoreCard; // using "copy" or "mirror" or "ghost" or whatever its called for tracking...
 	private int [] dice = new int [N_DICE];  // the constants says "4", which fails, changed to "5", plus using the variable
 	//int [] dice = {1,2,3,4,5}; // hard code for testing...
-	private int [] [] scoreCard;  // for internal .vs display scorecard tracking... unless another way!??
+	private int [] [] scoreCard;  // for internal .vs display scorecard tracking..
 	private int nPlayers;
 	private String[] playerNames;
 	private YahtzeeDisplay display;
