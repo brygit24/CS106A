@@ -1,4 +1,4 @@
-/* file Harchy.java
+/* file Hiearchy.java
  * Write a GraphicsProgram subclass that draws a partial diagram
  * of the acm.program hierarchy.
  * 
