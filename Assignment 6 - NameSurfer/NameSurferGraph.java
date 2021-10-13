@@ -11,8 +11,7 @@ import java.awt.event.*;
 import java.util.*;
 import java.awt.*;
 
-public class NameSurferGraph extends GCanvas
-        implements NameSurferConstants, ComponentListener {
+public class NameSurferGraph extends GCanvas implements NameSurferConstants, ComponentListener {
 	
 	// constructor also adds the component listener
 	public NameSurferGraph() {
