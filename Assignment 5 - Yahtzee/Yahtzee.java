@@ -21,29 +21,28 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 		nPlayers = dialog.readInt("Enter the number of players");
 		playerNames = new String[nPlayers];
 		for (int i = 1; i <= nPlayers; i++) {  // indexing the players names, to start at 1 instead of 0
-            playerNames[i - 1]	= dialog.readLine("Enter the name for player " + i);              
+                     playerNames[i - 1]	= dialog.readLine("Enter the name for player " + i);              
 		}				
 		display = new YahtzeeDisplay(getGCanvas(), playerNames);		
 		playGame();		
 	}
 	// entry/start...
-	public void playGame() {		 
+	private void playGame() {		 
 		// "ghost", "clone", "copy" for tracking purposes..
 		// note how indexing "+1" works.  Categories START at cat1 AND players START at player 1.		
 		scoreCard = new int[N_CATEGORIES+1][nPlayers+1];		
 		booleanScoreCard = new boolean[N_CATEGORIES][nPlayers+1];	 // for checking previous scores player basis		
 		// cycle through the number of player and number of turns per player
-		for (int turns = 0; turns < N_SCORING_CATEGORIES; turns++) {
-		//for (int turns = 0; turns < 2; turns++) {	
-			for (int player = 1; player <= nPlayers; player++) { // code DEALS with player indices starting at 1
-				firstRoll(player);
-				secondAndThirdRoll();
-				selectCategory(player);				
-			}			
+		for (int turns = 0; turns < N_SCORING_CATEGORIES; turns++) {		
+		    for (int player = 1; player <= nPlayers; player++) { // code DEALS with player indices starting at 1
+		        firstRoll(player);
+			secondAndThirdRoll();
+			selectCategory(player);				
+		    }			
 		}	
 		// Make the FINAL TOTAL SCORE CALCULATIONS.
 	    updateFinal();	    
-		declareWinner();	    
+	    declareWinner();	    
 	}	
 	//... 
 	private void firstRoll(int inPlayer) {
@@ -58,80 +57,80 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 		display.printMessage("Select the Dice to Re-roll and do Again(roll2)");
 		display.waitForPlayerToSelectDice();		
 		for (int i = 0; i < dice.length; i++) {
-			if (display.isDieSelected(i)) {				
-				rollOneDie(i,dice );
-			}
+		    if (display.isDieSelected(i)) {				
+			rollOneDie(i,dice );
+		    }
 		}
 		display.displayDice(dice);
 		display.printMessage("Select the Dice to Re-roll and do Again(roll3)");
 		display.waitForPlayerToSelectDice();
 		for (int i = 0; i < dice.length; i++) {
-			if (display.isDieSelected(i)) {				
-				rollOneDie(i,dice );
-			}
+		    if (display.isDieSelected(i)) {				
+			rollOneDie(i,dice );
+		    }
 		}
 		display.displayDice(dice);	
 		display.printMessage("end of roll3, TIME TO ADD YOUR SCORE");				
 	}
 	// INITAL roll of ALL dice
-	public int [] rollAllDie(int [] inArr) {
-		for (int i = 0; i < inArr.length; i++) {
-			inArr[i] = rgen.nextInt(1,6);			
-		}		
-		return inArr;
+	private int [] rollAllDie(int [] inArr) {
+	    for (int i = 0; i < inArr.length; i++) {
+	        inArr[i] = rgen.nextInt(1,6);			
+	    }		
+	    return inArr;
 	}	
 	// this is for the re-rolls
 	// pass the dice array in...
-	public void rollOneDie (int arrIndex, int [] inArr) {
-		int tInt = rgen.nextInt(1,6);
-		inArr[arrIndex] = tInt;
+	private void rollOneDie (int arrIndex, int [] inArr) {
+	    int tInt = rgen.nextInt(1,6);
+	    inArr[arrIndex] = tInt;
 	}	
 	// select category, check if previous value, do the math for the score.
 	private void selectCategory(int inPlayer) {				
-		int category = display.waitForPlayerToSelectCategory();
-		// Score Categories that DONT require dice validation....
+	    int category = display.waitForPlayerToSelectCategory();
+	    // Score Categories that DONT require dice validation....
 	    // It's safe to BYPASS checkCategory for valid dice roll, since the dice rolls happen elsewhere and are trusted..
-		if ((category >= ONES && category <= SIXES) || (category == CHANCE)) {  // Any roll is valid, if no matching #'s,  user gets a "0"			
-			// checking for previous value which, leverages off of "ghost" boolean array...
+	    if ((category >= ONES && category <= SIXES) || (category == CHANCE)) {  // Any roll is valid, if no matching #'s,  user gets a "0"			
+	        // checking for previous value which, leverages off of "ghost" boolean array...
+		if (checkPreviousScore(category, inPlayer) == true) {			    	
+		    display.printMessage("YOU HAVE ALREADY SELECTED THIS CAT, PICK ANOTHER!!");
+		    selectCategory(inPlayer);
+		}
+		else if (checkPreviousScore(category, inPlayer) == false) {
+		    updateSumScores(inPlayer, category);
+		}			    
+	    }		
+	    // Score Categories that DO require valid rolls..
+	    if (category >= THREE_OF_A_KIND && category <= YAHTZEE) {			
+	        if (checkDiceCategory(dice, category) == true){
 		    if (checkPreviousScore(category, inPlayer) == true) {			    	
-				display.printMessage("YOU HAVE ALREADY SELECTED THIS CAT, PICK ANOTHER!!");
-				selectCategory(inPlayer);
-		    }
-		    else if (checkPreviousScore(category, inPlayer) == false) {
-		    	updateSumScores(inPlayer, category);
+		        display.printMessage("YOU HAVE ALREADY SELECTED THIS CAT, PICK ANOTHER!!");
+			selectCategory(inPlayer);
+		    }		
+		    else if (checkPreviousScore(category, inPlayer) == false){			    	
+		        lowerScoreRouter(category, inPlayer);			        
 		    }			    
-		}		
-		// Score Categories that DO require valid rolls..
-		if (category >= THREE_OF_A_KIND && category <= YAHTZEE) {			
-			if (checkDiceCategory(dice, category) == true){
-				if (checkPreviousScore(category, inPlayer) == true) {			    	
-					display.printMessage("YOU HAVE ALREADY SELECTED THIS CAT, PICK ANOTHER!!");
-					selectCategory(inPlayer);
-			    }		
-			    else if (checkPreviousScore(category, inPlayer) == false){			    	
-			    	lowerScoreRouter(category, inPlayer);			        
-			    }			    
-			}			  	
-			else if ((checkDiceCategory(dice, category) == false)) {
-			    if (checkPreviousScore(category, inPlayer) == true) {			    	
-					display.printMessage("YOU HAVE ALREADY SELECTED THIS CAT, PICK ANOTHER!!");
-					selectCategory(inPlayer);
-			    }
-				else if (checkPreviousScore(category, inPlayer) == false) {	// the SELECTION failed, put zeros!!				
-					putZeros(category, inPlayer);					
-				}
-			}
-		}			
+		}			  	
+		else if ((checkDiceCategory(dice, category) == false)) {
+		    if (checkPreviousScore(category, inPlayer) == true) {			    	
+		        display.printMessage("YOU HAVE ALREADY SELECTED THIS CAT, PICK ANOTHER!!");
+			selectCategory(inPlayer);
+		    }
+		    else if (checkPreviousScore(category, inPlayer) == false) {	// the SELECTION failed, put zeros!!				
+		        putZeros(category, inPlayer);					
+		    }
+		}
+	    }			
 	}
 	// method to check previous score value..
 	// NOTE LEVERAGING OFF OF a GHOST BOOLEAN scorecard..	
 	private boolean checkPreviousScore(int inCat, int inPlayer) {		
 	    if (booleanScoreCard[inCat][inPlayer] == true) {		
-		    return true;
-		}
-		else {			
-		    return false;
-		}		
+	        return true;
+	    }
+	    else {			
+	        return false;
+	    }		
 	}	
 	// "updateSumScores" is called from different methods when a users ROUND total is in need of calculation
 	// updateSumScores calculates score for the Categories that are
@@ -141,42 +140,42 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 	// calculate to 0. Also, the other cat for this method is "CHANCE", which simply sums
 	// ALL of the dice.  Coded for these 2 in this method.
 	private void updateSumScores(int inPlayer, int inCat) {
-		int sum = 0;
-		// sum ALL of the dice = CHANCE
-		if (inCat == CHANCE) {
-		    for (int j = 0; j < dice.length; j++) {
-				sum = sum + dice[j];
-			}
+	    int sum = 0;
+	    // sum ALL of the dice = CHANCE
+	    if (inCat == CHANCE) {
+	        for (int j = 0; j < dice.length; j++) {
+		    sum = sum + dice[j];
 		}
-		else if (inCat != CHANCE) {
-			// ONLY sum dice in ACCORDANCE with INCAT...(1-6)
-			for (int i = 0; i < dice.length; i++) {	    	
-		    	if (dice[i] == inCat) {  // getting the value EVERYTIME the players' column is crossed	    		
-		    		sum = sum + dice[i];	    		
-		    	}
-		    }		
-		}	        
-		updateSums(inCat,inPlayer,sum);	    
-		updatePlayerTotal(inPlayer);	    
+	    }
+	    else if (inCat != CHANCE) {
+	        // ONLY sum dice in ACCORDANCE with INCAT...(1-6)
+		for (int i = 0; i < dice.length; i++) {	    	
+		    if (dice[i] == inCat) {  // getting the value EVERYTIME the players' column is crossed	    		
+		        sum = sum + dice[i];	    		
+		    }
+		}		
+	    }	        
+	    updateSums(inCat,inPlayer,sum);	    
+	    updatePlayerTotal(inPlayer);	    
 	}	
 	// for upperScores.
 	private void updateSums(int inCat, int inPlayer, int sum) {
-		display.updateScorecard(inCat,  inPlayer,  sum);  // magic score keeper
-		scoreCard[inCat][inPlayer] = sum;  // my internal score tracker
-		booleanScoreCard[inCat][inPlayer] = true;  // my tracker to test previous scores...		
+	    display.updateScorecard(inCat,  inPlayer,  sum);  // magic score keeper
+	    scoreCard[inCat][inPlayer] = sum;  // my internal score tracker
+	    booleanScoreCard[inCat][inPlayer] = true;  // my tracker to test previous scores...		
 	}
 	// updating the players total, this happens per round/3rolls...
 	private void updatePlayerTotal(int inPlayer) {
-		int total = 0;
-		for (int i = 1; i < N_CATEGORIES-1; i++ ) {
-			for (int j = 1; j < scoreCard[0].length; j++) {
-				if (j == inPlayer && (i < 16)) {
-					total = total + scoreCard[i][j];
-				}
-			}
-		}
-		display.updateScorecard(TOTAL, inPlayer, total);  // note that "TOTAL" is a constant in the def file....
-		scoreCard[TOTAL-1][inPlayer] = total;  // note deal with "TOTAL-1"		
+	    int total = 0;
+	    for (int i = 1; i < N_CATEGORIES-1; i++ ) {
+	        for (int j = 1; j < scoreCard[0].length; j++) {
+		    if (j == inPlayer && (i < 16)) {
+		        total = total + scoreCard[i][j];
+		    }
+	        }
+	    }
+	    display.updateScorecard(TOTAL, inPlayer, total);  // note that "TOTAL" is a constant in the def file....
+	    scoreCard[TOTAL-1][inPlayer] = total;  // note deal with "TOTAL-1"		
 	}
 	// method to route/check the lowerScores
 	private void lowerScoreRouter (int inCat, int inPlayer) {
@@ -230,7 +229,7 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 	private boolean checkDiceCategory (int [] inArr, int inCat) {
 	    diceMap.clear();  // to ensure there's no foo data!!.
 	    arrayToMap(inArr, diceMap);  // to assist with calculations...?? should I "parametorize" ?
-		// any dice roll valid, I don't call with these cats, but if someone did, it would work.
+	        // any dice roll valid, I don't call with these cats, but if someone did, it would work.
 		if ((inCat >= ONES && inCat <= SIXES) || (inCat == CHANCE)) {   // any roll is valid for these..		    	  
 		    return true;  // in addition, this is redundant, NOT called in opening. But if got here, would work!
 		}	      
@@ -262,26 +261,26 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 		return false;// the DEFAULT will be to return FALSE, each cat will return TRUE IF, or else land here and return false.		
 	}	
 	// set the map with the # of occurences... VIA the Incoming ARRAY!! 
-    // the sort/creation of the ARRAY is the catalyst to subsequent calculations!!!
-    // called from "checkDiceCategory" and "checkSmallStraight
-    private void arrayToMap(int [] inArr, HashMap<Integer, Integer> inMap) {
+        // the sort/creation of the ARRAY is the catalyst to subsequent calculations!!!
+        // called from "checkDiceCategory" and "checkSmallStraight
+        private void arrayToMap(int [] inArr, HashMap<Integer, Integer> inMap) {
 	    for(int i: inArr) {  // let's read into the map directly from the dice array AND put up counts!!!
-		    if(inMap.containsKey(i)) {  // check if previous value for index/number...		    	  
-			    inMap.put(i,  inMap.get(i) + 1);  // i = key, get delivers the key value.
-		    }
-		     else {
-			     inMap.put(i, 1); // if no PREVIOUS key, add and make the value 1.
-		     }
+	        if(inMap.containsKey(i)) {  // check if previous value for index/number...		    	  
+		    inMap.put(i,  inMap.get(i) + 1);  // i = key, get delivers the key value.
+		}
+		else {
+		    inMap.put(i, 1); // if no PREVIOUS key, add and make the value 1.
+		}
 	    }		
-    }	
+        }	
 	// called from "checkDiceCategory"
-    // checkDiceCategory will call this if player selects 3 OR 4 of a kind.    
-    private boolean checkthreeOrFourOfKind(int [] inArr) {
+        // checkDiceCategory will call this if player selects 3 OR 4 of a kind.    
+        private boolean checkthreeOrFourOfKind(int [] inArr) {
   	    for (Integer index : diceMap.keySet()) {  //looping map, key = index....from this...command
-		    Integer numVal = diceMap.get(index);  // getting the value of the key "index"		      
-		        if (numVal >= 3) {  // if there is an key that has 3 or more entries, were good for 3 or four of kind.  No other test requirement					
-	                return true;					
-		        }								
+	        Integer numVal = diceMap.get(index);  // getting the value of the key "index"		      
+		if (numVal >= 3) {  // if there is an key that has 3 or more entries, were good for 3 or four of kind.  No other test requirement					
+	            return true;					
+		}								
 	    }
   	    return false;
     }    
@@ -289,145 +288,145 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
     // convert the data back into an arrayLIST
     // return true if test passes or false otherwise.
     private boolean checkSmallStraight(int [] inArr, HashMap<Integer, Integer> inMap, ArrayList<Integer> inArrList) {
-  	    // let's read into the map directly from the dice array AND put up counts!!!
-  	    // REQUIRED to get rid of DUPLICATEs to perform the validity calculation.
+        // let's read into the map directly from the dice array AND put up counts!!!
+  	// REQUIRED to get rid of DUPLICATEs to perform the validity calculation.
         // call array to map with "smallStraightMap"..
         arrayToMap(inArr, inMap);  	  
-  	    // if a set of dice has more than 2 duplicates, it can't be a small straight.
-  	    for(Integer index : inMap.keySet()) {
-		    Integer numVal = inMap.get(index);		      
-		    if (numVal > 2) {
-		        return false; 
-		    }
-		    else {
-		        inArrList.add(index); // converting map to an ARRAYLIST for processing...further calculations.
-		    }
-	    }  	        	  
-  	    // find smallest number, find largest number the do math....
-  	    int min = findSmallestInList(inArrList);
-  	    int max = findLargestInList(inArrList);
-  	    if (max - min == inArrList.size() - 1) { // the proof!!        		  
+  	// if a set of dice has more than 2 duplicates, it can't be a small straight.
+  	for(Integer index : inMap.keySet()) {
+	    Integer numVal = inMap.get(index);		      
+	    if (numVal > 2) {
+	        return false; 
+	    }
+	    else {
+	        inArrList.add(index); // converting map to an ARRAYLIST for processing...further calculations.
+	    }
+	}  	        	  
+  	// find smallest number, find largest number then do math....
+  	int min = findSmallestInList(inArrList);
+  	int max = findLargestInList(inArrList);
+  	if (max - min == inArrList.size() - 1) { // the proof!!        		  
     	    return true;
     	}              
   	    return false;        	  
     }
     // finds the smallest integer in an ARRAYLIST...
     private int findSmallestInList(ArrayList<Integer> inArrList) {
-	      int sml = inArrList.get(0);
-		  for(int i : inArrList) {  // note: using the for Each construct!!!
-		      if (sml > i) {
-			      sml = i;
-			  }			
-		  }
-		  return sml;
+        int sml = inArrList.get(0);
+	for(int i : inArrList) {  // note: using the for Each construct!!!
+	    if (sml > i) {
+	        sml = i;
+	    }			
 	}
+	return sml;
+    }
     // find the largest integer in an ARRAYLIST...
     private int findLargestInList(ArrayList<Integer> inArrList) {
-		int lg = inArrList.get(0);
-		for (int i : inArrList) {
-			if (lg < i) {
-				lg = i;
-			}
-		}
-		return lg;
-	}    
+        int lg = inArrList.get(0);
+	for (int i : inArrList) {
+	    if (lg < i) {
+	        lg = i;
+	    }
+	}
+	return lg;
+    }    
     //...
     private boolean checkLargeStraight() {
-  	    int min = findSmallestInArray(dice);
-	    int max = findLargestInArray(dice);	    	      
-	    //the math!! the formula!      
-	    if (max - min == dice.length - 1) { // the proof!!		    	    		
-		    return true;
-	    }
-	      return false;
+        int min = findSmallestInArray(dice);
+	int max = findLargestInArray(dice);	    	      
+	//the math!! the formula!      
+	if (max - min == dice.length - 1) { // the proof!!		    	    		
+	    return true;
+	}
+	return false;
     }
     // prior to getting the algorithm for straight and large straight,  
     // must find the smallest first...
     private int findSmallestInArray(int [] inArr) {
-	    int sml = inArr[0];
-	    for(int i : inArr) {  // note: using the for Each construct!!!
-	        if (sml > i) {
-		        sml = i;
-	        }			
-	    }		  
-	    return sml;
+        int sml = inArr[0];
+	for(int i : inArr) {  // note: using the for Each construct!!!
+	    if (sml > i) {
+	        sml = i;
+	    }			
+	}		  
+	return sml;
     }
     // prior to getting the algorithm for straight and large straight,
     // must find the largest first.
     private int findLargestInArray(int [] inArr) {
-	    int lg = inArr[0];
-	    for (int i : inArr) {
-		    if (lg < i) {
-			    lg = i;
-		    }
-	    }		
-	    return lg;
+        int lg = inArr[0];
+	for (int i : inArr) {
+	    if (lg < i) {
+	         lg = i;
+	    }
+	}		
+	return lg;
     }    
     // total the final scores.
- 	private void updateFinal() {	    
- 	    for (int i = 1; i <= nPlayers; i++) {
- 	        updateUpperScore(i);
- 	    	updateBonusScore(i);
- 	    	updateLowerScore(i); 
- 	    	updateTotalScore(i);
- 	    }	    
- 	}	
- 	//...
- 	private void updateTotalScore(int inPlayer) {
- 		int totalScore = 0;
- 		totalScore = scoreCard[UPPER_SCORE][inPlayer] + scoreCard[UPPER_BONUS][inPlayer] + scoreCard[LOWER_SCORE][inPlayer];
- 		scoreCard[TOTAL][inPlayer] = totalScore;  // my tracker...
- 		display.updateScorecard(TOTAL, inPlayer, totalScore);  // official display via yahtzeelib
- 	}	
- 	//...
- 	private void updateLowerScore(int inPlayer) {
- 		int lowerScore = 0;
- 		for (int i = THREE_OF_A_KIND; i < LOWER_SCORE; i++) {
- 			for (int j = inPlayer; j <= nPlayers; j++) {
- 				if (j == inPlayer) {  // ONLY SUM FOR INPLAYER!!! {
- 					lowerScore = lowerScore + scoreCard[i][j];	
- 				}				
- 			}
- 		}
- 		scoreCard[LOWER_SCORE][inPlayer] = lowerScore;
- 		display.updateScorecard(LOWER_SCORE, inPlayer, lowerScore); // official display via yahtzeelib
+    private void updateFinal() {	    
+        for (int i = 1; i <= nPlayers; i++) {
+ 	    updateUpperScore(i);
+ 	    updateBonusScore(i);
+ 	    updateLowerScore(i); 
+ 	    updateTotalScore(i);
+ 	}	    
+    }	
+    //...
+    private void updateTotalScore(int inPlayer) {
+        int totalScore = 0;
+        totalScore = scoreCard[UPPER_SCORE][inPlayer] + scoreCard[UPPER_BONUS][inPlayer] + scoreCard[LOWER_SCORE][inPlayer];
+ 	scoreCard[TOTAL][inPlayer] = totalScore;  // my tracker...
+ 	display.updateScorecard(TOTAL, inPlayer, totalScore);  // official display via yahtzeelib
+    }	
+    //...
+    private void updateLowerScore(int inPlayer) {
+        int lowerScore = 0;
+ 	for (int i = THREE_OF_A_KIND; i < LOWER_SCORE; i++) {
+ 	    for (int j = inPlayer; j <= nPlayers; j++) {
+ 	        if (j == inPlayer) {  // ONLY SUM FOR INPLAYER!!! {
+ 		    lowerScore = lowerScore + scoreCard[i][j];	
+		}				
+ 	    }
  	}
- 	// Calculate the upper bonus, if applicable
- 	private void updateBonusScore(int inPlayer) {
- 		if (scoreCard[UPPER_SCORE][inPlayer] >= 63) {
- 			scoreCard[UPPER_BONUS][inPlayer] = 35;
- 			display.updateScorecard(UPPER_BONUS, inPlayer, 35);
- 		}
+ 	scoreCard[LOWER_SCORE][inPlayer] = lowerScore;
+        display.updateScorecard(LOWER_SCORE, inPlayer, lowerScore); // official display via yahtzeelib
+    }
+    // Calculate the upper bonus, if applicable
+    private void updateBonusScore(int inPlayer) {
+        if (scoreCard[UPPER_SCORE][inPlayer] >= 63) {
+ 	    scoreCard[UPPER_BONUS][inPlayer] = 35;
+ 	    display.updateScorecard(UPPER_BONUS, inPlayer, 35);
  	}
- 	//...
- 	private void updateUpperScore(int inPlayer) {
- 	    int upperScore = 0;
- 		for (int i = 1; i < UPPER_SCORE; i++) {
- 		    for (int j = inPlayer; j <= nPlayers; j++) {
- 			    if (j == inPlayer) {  // ONLY SUM FOR INPLAYER!!!
- 				    upperScore = upperScore + scoreCard[i][j];	
- 				}				
- 			}
- 		}
- 		// update 2 scorecards, mine and the official via yahtzeelib
- 		scoreCard[UPPER_SCORE][inPlayer] = upperScore;
- 		display.updateScorecard(UPPER_SCORE, inPlayer, upperScore);
- 	}	
-	//...
-	private void declareWinner() {
-		int bigFinal = scoreCard[TOTAL][1];
-		String bigFinalPlayerName = playerNames[0];
-		for (int i = TOTAL; i <= TOTAL; i++) {
-			for (int j = 1; j <= nPlayers; j++) {
-				if (scoreCard[TOTAL][j] > bigFinal) {
-					bigFinal = scoreCard[TOTAL][j];
-					bigFinalPlayerName = playerNames[j-1];
-				}
-			}
+    }
+    //...
+    private void updateUpperScore(int inPlayer) {
+        int upperScore = 0;
+ 	for (int i = 1; i < UPPER_SCORE; i++) {
+ 	    for (int j = inPlayer; j <= nPlayers; j++) {
+ 	        if (j == inPlayer) {  // ONLY SUM FOR INPLAYER!!!
+ 		    upperScore = upperScore + scoreCard[i][j];	
+		}				
+ 	    }
+ 	}
+ 	// update 2 scorecards, mine and the official via yahtzeelib
+ 	scoreCard[UPPER_SCORE][inPlayer] = upperScore;
+ 	display.updateScorecard(UPPER_SCORE, inPlayer, upperScore);
+    }	
+    //...
+    private void declareWinner() {
+        int bigFinal = scoreCard[TOTAL][1];
+	String bigFinalPlayerName = playerNames[0];
+	    for (int i = TOTAL; i <= TOTAL; i++) {
+	        for (int j = 1; j <= nPlayers; j++) {
+		    if (scoreCard[TOTAL][j] > bigFinal) {
+		        bigFinal = scoreCard[TOTAL][j];
+			bigFinalPlayerName = playerNames[j-1];
+		    }
 		}
-		display.printMessage("Game over! Winner is: " + bigFinalPlayerName + "  With the Score: " + bigFinal);
-	}	
-	// private instance variables..
+	    }
+	    display.printMessage("Game over! Winner is: " + bigFinalPlayerName + "  With the Score: " + bigFinal);
+    }	
+	// instance variables..
 	private HashMap <Integer, Integer> diceMap = new HashMap<Integer, Integer>();
 	private HashMap <Integer, Integer> smallStraightMap = new HashMap<Integer, Integer>();
 	private ArrayList<Integer> smallStraightList = new ArrayList<Integer>();	
