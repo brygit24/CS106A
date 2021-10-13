@@ -22,46 +22,42 @@ public class HangmanLexicon {
     
     // create the array list...
     private void createList (BufferedReader inBuff) {
-    	try {
-    		while (true) {
-    			String bLine = inBuff.readLine();
-    			if (bLine == null) {
-    				break;
-    			}    			
-    			bList.add(bLine);  // adding by EACH line to the array list...
-    		}
-    		inBuff.close();
+        try {
+    	    while (true) {
+    	        String bLine = inBuff.readLine();
+    		if (bLine == null) {
+    		    break;
+    		}    			
+    		    bList.add(bLine);  // adding by EACH line to the array list...
+    	    }
+    	    inBuff.close();
     	}
     	catch (IOException ex) {
-    		throw new ErrorException(ex);
+    	    throw new ErrorException(ex);
     	}    	
-    }
-    
-	// Create/open the buffered reader..
+    }    
+    // Create/open the buffered reader..
     private BufferedReader openFile (String inFile) {
-    	BufferedReader bTemp = null;    	
+        BufferedReader bTemp = null;    	
     	while (bTemp == null) {
-    		try {
-    			bTemp = new BufferedReader(new FileReader(inFile));
-    		}
+    	    try {
+    	        bTemp = new BufferedReader(new FileReader(inFile));
+    	    }
     	    catch (IOException ex) {
-    		    System.out.println("Cannot open this file");
+    	        System.out.println("Cannot open this file");
     	    }
     	}
     	return bTemp;
     }
-    
-	// returns the number of words in the lexicon
-	public int getWordCount() {		
-		return bList.size() -1;  // array count subtract 1 due to index starting at 0. Rgen start = 0.
-	}
-	
-	// returns the word leveraging of off passed index
-	// note, that work count does a "-1" due to array indexes starting at 0.
-	public String getWord(int index) {		
-		return bList.get(index);		
-	}
-
-	// want access to these regardless to method hiding....	
-	public ArrayList<String> bList;
+    // returns the number of words in the lexicon
+    public int getWordCount() {		
+        return bList.size() -1;  // array count subtract 1 due to index starting at 0. Rgen start = 0.
+    }
+    // returns the word leveraging of off passed index
+    // note, that work count does a "-1" due to array indexes starting at 0.
+    public String getWord(int index) {		
+        return bList.get(index);		
+    }
+    // ..
+    private ArrayList<String> bList;
 }
