@@ -15,16 +15,15 @@ public class Pythagoreantheorem extends ConsoleProgram {
 	
 	public static void main(String [] args) {
 		new Pythagoreantheorem().start(args);
-	}
-	
+	}	
 	public void run () {
-		println("Enter values to compute Pythagorean's theorom");
-  	  int int1 = readInt("a:");
-  	  int int1R = int1 * int1;
-  	  int int2 = readInt("b:");
-  	  int int2R = int2 * int2;
-  	  int int3 = int1R + int2R;      	  
-  	  double yy = Math.sqrt(int3);
-  	  println("c = "+ yy);	
+	    println("Enter values to compute Pythagorean's theorom");
+  	    int int1 = readInt("a:");
+  	    int int1R = int1 * int1;
+  	    int int2 = readInt("b:");
+  	    int int2R = int2 * int2;
+  	    int int3 = int1R + int2R;      	  
+  	    double yy = Math.sqrt(int3);
+  	    println("c = "+ yy);	
 	}
 }
