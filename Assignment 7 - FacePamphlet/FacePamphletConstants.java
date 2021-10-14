@@ -75,8 +75,3 @@ public interface FacePamphletConstants {
 	 *  in the profile */		
 	public static final double STATUS_MARGIN = 20;
 }
-
-
-
-
-
