@@ -12,26 +12,24 @@ import java.util.*;
 import acm.util.*;
 
 public class FacePamphletProfile implements FacePamphletConstants { 
-	/*
-	 * Constructor 
-	 */
+	// Constructor 	
 	public FacePamphletProfile(String inName) {		
-		profileName = inName;
-		profStatus = "No Current Status";
-		profImage = null;		
+	    profileName = inName;
+	    profStatus = "No Current Status";
+	    profImage = null;		
 	}	
 	/*
 	 * This method returns the name associated with the profile
 	 */
 	public String getName() {
-		return profileName;
+	    return profileName;
 	}	
 	/*
 	 * The method returns the image associated with the profile
 	 * If there is no image associated with the profile, the method returns null..
 	 */
 	public GImage getImage() {		
-		return profImage;
+	    return profImage;
 	}
 	/*
 	 * This method sets the image associated with the profile
@@ -39,15 +37,15 @@ public class FacePamphletProfile implements FacePamphletConstants {
 	 * a foo image.  I test it in facepamphlet as well..
 	 */	
 	public boolean setImage(String inFile) {	
-		try {		    
-			profImage = new GImage(inFile);
-			return true;
-		} 
-		catch (ErrorException ex) {			
-			profImage = null;			
-			//throw new ErrorException(ex);
-			return false;			
-		 }		
+	    try {		    
+	        profImage = new GImage(inFile);
+		return true;
+	    } 
+	    catch (ErrorException ex) {			
+	        profImage = null;			
+		//throw new ErrorException(ex);
+		return false;			
+	    }		
 	}
 	/*
 	 * This method returns the status associated with the profile.
@@ -55,13 +53,13 @@ public class FacePamphletProfile implements FacePamphletConstants {
 	 * returns an empty string("");
 	 */
 	public String getStatus() {		
-		return profStatus;
+	    return profStatus;
 	}
 	/*
 	 * This method sets the status associated with the profile
 	 */
 	public void setStatus(String inStatus) {
-		profStatus = inStatus;
+	    profStatus = inStatus;
 	}	
 	/*
 	 * This method adds the named friend to the profiles list of 
@@ -72,26 +70,25 @@ public class FacePamphletProfile implements FacePamphletConstants {
 	 * friend name is not added to the list of friends a second time.)
 	 */	
 	public boolean addFriend(String inFriend) {
-		if (friendsList.size() == 0) {  // improve log time???
-			friendsList.add(inFriend);			
-			return true;
-		}
-		// use a search helper, if false add and split
-		else if (checkFriendList(inFriend) == false ) {
-			friendsList.add(inFriend);
-			return true;
-		}
-		// default, extra protection and, method must have a return here
-		return false;		
+	    if (friendsList.size() == 0) {  // improve log time???
+	        friendsList.add(inFriend);			
+		return true;
+	    }
+	    // use a search helper, if false add and split
+	    else if (checkFriendList(inFriend) == false ) {
+	        friendsList.add(inFriend);
+		return true;
+	    }	    
+	    return false;		
 	}	
 	// a search helper to assist with addFriend check	
 	private boolean checkFriendList(String inFriend) {
-		for (String element: friendsList) {
-			if (element.contains(inFriend)) {				
-				return true;
-			}
+	    for (String element: friendsList) {
+	        if (element.contains(inFriend)) {				
+		    return true;
 		}
-		return false;
+	    }
+	    return false;
 	}
 	/* This method removes the named friend from this profile's list
 	 * of friends.  It returns true if the friend's name was in the 
@@ -101,20 +98,20 @@ public class FacePamphletProfile implements FacePamphletConstants {
 	 * case, the given friend name could not be removed).
 	 */
 	public boolean removeFriend(String inFriend) {		
-		for (String element : friendsList) {
-			if (element.contains(inFriend)) {
-				friendsList.remove(element);
-				return true;
-			}
+	    for (String element : friendsList) {
+	        if (element.contains(inFriend)) {
+		    friendsList.remove(element);
+		    return true;
 		}
-		return false;
+	    }
+	    return false;
 	}	
 	/*
 	 * this method returns an iterator over the list of friends
 	 * associated with the profile.
 	 */
 	public Iterator<String> getFriends() {	
-		return friendsList.iterator();		
+	    return friendsList.iterator();		
 	}
 	/*
 	 * This method returns a string representation of the profile.
@@ -124,29 +121,28 @@ public class FacePamphletProfile implements FacePamphletConstants {
 	 * overrides default toString method
 	 */
 	public String toString() {		
-		if (friendsList.size() == 0) {			
-			return (profileName + " (" + profStatus + "): " );
-		}
-		else if (friendsList.size() > 0 ) {
-			fList = getFriendString();
-		}		
-		return (profileName  + " (" + profStatus + "): " + fList);	
+	    if (friendsList.size() == 0) {			
+	        return (profileName + " (" + profStatus + "): " );
+	    }
+	    else if (friendsList.size() > 0 ) {
+	        fList = getFriendString();
+	    }		
+	    return (profileName  + " (" + profStatus + "): " + fList);	
 	}
 	// method to create a comma separated list of friends for this profile...
 	private String getFriendString()  {
-		String outStr = "";
-		Iterator bIter = friendsList.iterator();		
-    	while (bIter.hasNext()) {
-    		outStr = outStr + bIter.next() + ", ";
+	    String outStr = "";
+	    Iterator bIter = friendsList.iterator();		
+    	    while (bIter.hasNext()) {
+    	        outStr = outStr + bIter.next() + ", ";
 	    }
-    	outStr = outStr.substring(0, outStr.length() - 2);
-    	return outStr;
+    	    outStr = outStr.substring(0, outStr.length() - 2);
+    	    return outStr;
 	}	
-	// private instance variables
+	// instance variables
 	private String profileName;	
 	private String fList;
 	private String profStatus;
 	private GImage profImage;	
 	private ArrayList<String> friendsList = new ArrayList<String>();
 }
-
